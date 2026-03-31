@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.local
+*.md
+pdf-converter-lambda
+decode_pdf.py
+lambda_output.json
+test_event.json
