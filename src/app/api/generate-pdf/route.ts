@@ -20,7 +20,7 @@ interface TimesheetRequest {
   year: number;
   defaultHours: number;
   includeHolidays: boolean;
-  dayOverrides?: Record<string, { regular: number; overtime: number }>;
+  dayOverrides?: Record<string, { regular: number; overtime: number; leave?: boolean }>;
 }
 
 interface WeekInfo {
@@ -102,14 +102,14 @@ function fmtDateUS(d: Date): string {
 function computeHours(
   day: WeekInfo["days"][0],
   params: TimesheetRequest
-): { regular: number; overtime: number } {
+): { regular: number; overtime: number; leave?: boolean } {
   if (day.isOutsideMonth || day.isWeekend) return { regular: 0, overtime: 0 };
   if (params.includeHolidays && day.isHoliday)
     return { regular: 0, overtime: 0 };
   const iso = `${day.date.getUTCFullYear()}-${String(day.date.getUTCMonth() + 1).padStart(2, "0")}-${String(day.date.getUTCDate()).padStart(2, "0")}`;
   const override = params.dayOverrides?.[iso];
   if (override)
-    return { regular: override.regular, overtime: override.overtime };
+    return { regular: override.regular, overtime: override.overtime, leave: override.leave };
   return { regular: params.defaultHours, overtime: 0 };
 }
 
@@ -171,13 +171,19 @@ async function fillTemplate(
   for (let i = 0; i < 7; i++) {
     const r = dayRows[i];
     const day = week.days[i];
-    const { regular, overtime } = computeHours(day, params);
+    const { regular, overtime, leave } = computeHours(day, params);
     const total = regular + overtime;
 
     ws.getCell(r, 3).value = utcNoon(day.date);
-    ws.getCell(r, 5).value = regular > 0 ? regular : null;
-    ws.getCell(r, 6).value = overtime > 0 ? overtime : null;
-    ws.getCell(r, 7).value = total;
+    if (leave) {
+      ws.getCell(r, 5).value = "Leave";
+      ws.getCell(r, 6).value = 0;
+      ws.getCell(r, 7).value = 0;
+    } else {
+      ws.getCell(r, 5).value = regular;
+      ws.getCell(r, 6).value = overtime;
+      ws.getCell(r, 7).value = total;
+    }
     setCenturyFont(`C${r}`);
     setCenturyFont(`E${r}`);
     setCenturyFont(`F${r}`);

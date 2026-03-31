@@ -98,9 +98,9 @@ export default function Home() {
     setResults([]);
 
     try {
-      const dayOverrides = leaveDates.reduce<Record<string, { regular: number; overtime: number }>>(
+      const dayOverrides = leaveDates.reduce<Record<string, { regular: number; overtime: number; leave?: boolean }>>(
         (acc, iso) => {
-          acc[iso] = { regular: 0, overtime: 0 };
+          acc[iso] = { regular: 0, overtime: 0, leave: true };
           return acc;
         },
         {}
@@ -239,7 +239,7 @@ export default function Home() {
 
         <div className="border border-gray-200 rounded-md p-3">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-700">Leave Days (0 hours)</p>
+            <p className="text-sm font-medium text-gray-700">Select Leave Days</p>
             <button
               type="button"
               onClick={() => setLeaveDates([])}
