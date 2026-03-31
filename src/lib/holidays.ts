@@ -11,7 +11,6 @@ export const HOLIDAYS_2026: Holiday[] = [
   { name: "Republic Day", date: "2026-01-26" },
   { name: "Holi", date: "2026-03-04" },
   { name: "Ugadi", date: "2026-03-19" },
-  { name: "Ramzan Eid", date: "2026-03-20" },
   { name: "Independence Day", date: "2026-08-15" },
   { name: "Vinayaka Chaturthi", date: "2026-09-14" },
   { name: "Dussehra (Vijayadashami)", date: "2026-10-20" },
